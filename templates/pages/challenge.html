@@ -1,0 +1,59 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Desafio {{challenge.id}}{% endblock %}
+
+{% block menu %}
+{% include 'components/menu.html' %}
+{% include 'components/Search.html' %}
+{% endblock %}
+
+{% block content %}
+
+<form action="" enctype=""></form>
+
+<section class="container">
+    <div class="my-3">
+        <div class="text-center">
+            <h1>{{ challenge.nome }}</h1>
+        </div>
+
+        <p>{{ challenge.descricao }}</p><br>
+        <p>Edição: {{challenge.edicao_olimpiada.nome}}</p>
+        <p>Status: {{challenge.get_status}}</p>
+
+        {% if challenge.url_prova %}
+         <a href="{{challenge.url_prova}}" class="text-body decored_link">Formulario da prova</a>
+        {% endif %}
+        <div>
+            {% if challenge.gabarito %}
+                <td><a href="{{challenge.gabarito.url}}" class="text-body decored_link">Gabarito</a></td><br>
+            {% else %}
+                <td><a href="#" class="text-body decored_link">Gabarito</a></td><br>
+            {% endif %}
+            {% if challenge.resultado %}
+                <td><a href="{{challenge.resultado.url}}" class="text-body decored_link">Resultado</a></td><br>
+                <!--forçar download: &response-content-disposition=attachment&forcedownload=1-->
+            {% else %}
+                <td><a href="#" class="text-body decored_link">Resultado</a></td><br>
+            {% endif %}
+        </div>
+        <p>Inicio: {{challenge.data_de_inicio}}</p><br>
+        <p>Termino: {{challenge.data_de_termino}}</p><br>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block style %}
+<style>
+    .decored_link{
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block footer %}
+    {% include 'components/footer.html' %}
+{% endblock %}

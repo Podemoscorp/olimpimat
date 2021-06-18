@@ -1,0 +1,176 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{olimpiada.nome}}{% endblock %}
+
+{% block menu %}
+{% include 'components/menu.html' %}
+{% include 'components/Search.html' %}
+{% endblock %}
+
+{% block content %}
+
+<section class="container py-2">
+    <div id="inicio">
+        <div class="d-flex justify-content-center py-1">
+            <img src="{{olimpiada.imagem.url}}" alt="Logo Olimpimat" class="img-fluid">
+        </div>
+        <div class="text-center py-1">
+            <h1>{{olimpiada.nome}}</h1>
+            <h2>Competição de Matemática para estudantes da Educação Básica</h2>
+        </div>
+
+        <div>
+            <div id="descricao"></div>
+            <div>
+                <p><a href="{{olimpiada.tutorial}}" class="text-body"><strong>TUTORIAL</strong> clique aqui</a></p>
+                <p><a href="{{olimpiada.regulamento_alterado.url}}" class="text-body"><strong>REGULAMENTO ALTERADO</strong> clique aqui</a></p>
+                <p><a href="{{olimpiada.regulamento.url}}" class="text-body"><strong>REGULAMENTO</strong> clique aqui</a></p>
+                <p><a href="{{olimpiada.regulamento_jr.url}}" class="text-body"><strong>REGULAMENTO JR</strong> clique aqui</a></p>
+                <p><a href="{{olimpiada.cronograma.url}}" class="text-body"><strong>CRONOGRAMA</strong> clique aqui</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="challenges" id="desafios">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" class='text-center position'>ID</th>
+                    <th scope="col" class="name">Desafio</th>
+                    <th scope="col" class="status">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for challenge in challenges %}
+                <tr>
+                    <th scope="row" class='text-center position'><a href="{% url 'challenge' challenge.id %}" class="text-body">{{ challenge.id }}</a></th>
+                    <td><a href="{% url 'challenge' challenge.id %}" class="name decored_link text-body">{{challenge.nome}}</a></td>
+                    <td><a href="{% url 'challenge' challenge.id %}" class="status text-body">{{challenge.get_status}}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td class="text-center"><a href="{{olimpiada.regulamento.url}}" class="tfoot-a"><b>Regulamento</b></a></td>
+                    <td></td>
+                    <td><a href="https://youtu.be/tQIXj3577LM" class="tfoot-a"><b>Como participar</b></a></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="container d-flex justify-content-center py-3">
+        <div>
+            {% if challenges.has_other_pages %}
+                <ul class="pagination">
+                    {% if challenges.has_previous %}
+                        <li class="page-item">
+                            <a href="?page={{ challenges.previous_page_number }}" class="page-link">&laquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link">&laquo;</a>
+                        </li>
+                    {% endif %}
+                    {% for pagina in challenges.paginator.page_range %}
+                        {% if challenges.number == pagina %}
+                            <li class="page-item active">
+                                <a class="page-link">{{ pagina }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a href="?page={{pagina}}" class="page-link">{{pagina}}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if challenges.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ challenges.next_page_number }}" class="page-link">&raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link">&raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block footer %}
+    {% include 'components/footer.html' %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        var md = new Remarkable({
+            html: false, // Enable HTML tags in source
+            xhtmlOut: false, // Use '/' to close single tags (<br />)
+            breaks: false, // Convert '\n' in paragraphs into <br>
+            linkify: true, // Autoconvert URL-like text to links
+
+            // Enable some language-neutral replacement + quotes beautification
+            typographer: false,
+
+            // Double + single quotes replacement pairs, when typographer enabled,
+            // and smartquotes on. Set doubles to '«»' for Russian, '„“' for German.
+            quotes: '""``'
+        });
+
+        document.getElementById('descricao').innerHTML = md.render("{{olimpiada.processed_descricao}}")
+    </script>
+{% endblock %}
+
+{% block style %}
+
+<style>
+    .decored_link{
+        text-decoration: underline;
+    }
+
+    .challenges {
+        margin-top: 1rem;
+    }
+
+    .challenges thead tr {
+        background: var(--primary-color);
+        color: var(--white);
+    }
+
+    .challenges tfoot td, tfoot tr{
+        background: var(--primary-color);
+        color: var(--white);
+    }
+
+    .challenges thead th {
+        width: 10%;
+    }
+
+    .challenges tbody {
+        background: var(--white);
+    }
+
+    .challenges .position {
+        width: 15%;
+    }
+
+    .challenges .name {
+        width: 65%;
+    }
+
+    .challenges .status{
+        width: 25%;
+    }
+
+    .challenges .tfoot-a{
+        color: white;
+    }
+</style>
+
+{% endblock %}
